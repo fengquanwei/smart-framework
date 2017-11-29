@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 类操作助手类
+ * Class 助手
  *
  * @author fengquanwei
  * @create 2017/11/13 14:23

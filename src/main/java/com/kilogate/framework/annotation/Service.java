@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 服务类注解（在服务类上使用）
+ * 服务
  *
  * @author fengquanwei
  * @create 2017/11/13 14:15

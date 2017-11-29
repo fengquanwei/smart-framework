@@ -3,7 +3,7 @@ package com.kilogate.framework.annotation;
 import java.lang.annotation.*;
 
 /**
- * 切面注解
+ * 切面
  *
  * @author fengquanwei
  * @create 2017/11/22 17:23

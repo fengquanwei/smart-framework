@@ -7,7 +7,7 @@ import com.kilogate.framework.helper.IocHelper;
 import com.kilogate.framework.util.ClassUtil;
 
 /**
- * 加载相应的 Helper 类
+ * Helper 加载器
  *
  * @author fengquanwei
  * @create 2017/11/17 20:23

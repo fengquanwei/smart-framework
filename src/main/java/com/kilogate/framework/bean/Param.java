@@ -3,7 +3,7 @@ package com.kilogate.framework.bean;
 import java.util.Map;
 
 /**
- * 请求参数
+ * 参数
  *
  * @author fengquanwei
  * @create 2017/11/17 20:39

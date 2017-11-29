@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Action 方法注解（在控制器类的方法上使用）
+ * Action
  *
  * @author fengquanwei
  * @create 2017/11/13 14:15
@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Action {
     /**
-     * 请求类型与路径
+     * 请求方法与路径
      */
     String value();
 }

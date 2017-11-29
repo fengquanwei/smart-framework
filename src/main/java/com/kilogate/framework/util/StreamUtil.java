@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * 流操作工具类
+ * Stream 工具类
  *
  * @author fengquanwei
  * @create 2017/11/17 21:16

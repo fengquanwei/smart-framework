@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Bean 助手类
+ * Bean 助手
  *
  * @author fengquanwei
  * @create 2017/11/17 19:15

@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 控制器注解（在控制器类上使用）
+ * 控制器
  *
  * @author fengquanwei
  * @create 2017/11/13 14:13

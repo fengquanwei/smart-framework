@@ -5,7 +5,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 /**
- * 编码与解码操作工具类
+ * 编码工具类
  *
  * @author fengquanwei
  * @create 2017/11/17 21:19

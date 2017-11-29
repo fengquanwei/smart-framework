@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 控制器助手类
+ * 控制器助手
  *
  * @author fengquanwei
  * @create 2017/11/17 19:58

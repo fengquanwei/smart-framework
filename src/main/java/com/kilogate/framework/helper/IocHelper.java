@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
- * 依赖注入助手类
+ * 依赖注入助手
  *
  * @author fengquanwei
  * @create 2017/11/17 19:36
