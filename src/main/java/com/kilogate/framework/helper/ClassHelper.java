@@ -4,6 +4,7 @@ import com.kilogate.framework.annotation.Controller;
 import com.kilogate.framework.annotation.Service;
 import com.kilogate.framework.util.ClassUtil;
 
+import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,26 +34,14 @@ public class ClassHelper {
      * 获取应用包名下的所有 Service 类
      */
     public static Set<Class<?>> getServiceClassSet() {
-        Set<Class<?>> classSet = new HashSet<>();
-        for (Class<?> clazz : CLASS_SET) {
-            if (clazz.isAnnotationPresent(Service.class)) {
-                classSet.add(clazz);
-            }
-        }
-        return classSet;
+        return getClassSetByAnnotation(Service.class);
     }
 
     /**
      * 获取应用包名下的所有 Controller 类
      */
     public static Set<Class<?>> getControllerClassSet() {
-        Set<Class<?>> classSet = new HashSet<>();
-        for (Class<?> clazz : CLASS_SET) {
-            if (clazz.isAnnotationPresent(Controller.class)) {
-                classSet.add(clazz);
-            }
-        }
-        return classSet;
+        return getClassSetByAnnotation(Controller.class);
     }
 
     /**
@@ -64,4 +53,31 @@ public class ClassHelper {
         classSet.addAll(getControllerClassSet());
         return classSet;
     }
+
+    /**
+     * 获取应用包名下某父类（或接口）的所有子类（或实现类）
+     */
+    public static Set<Class<?>> getClassSetBySuper(Class<?> superClass) {
+        Set<Class<?>> classSet = new HashSet<>();
+        for (Class<?> clazz : CLASS_SET) {
+            if (superClass.isAssignableFrom(superClass) && !superClass.equals(clazz)) {
+                classSet.add(clazz);
+            }
+        }
+        return classSet;
+    }
+
+    /**
+     * 获取应用包名下带有某注解的所有类
+     */
+    public static Set<Class<?>> getClassSetByAnnotation(Class<? extends Annotation> annotationClass) {
+        Set<Class<?>> classSet = new HashSet<>();
+        for (Class<?> clazz : CLASS_SET) {
+            if (clazz.isAnnotationPresent(annotationClass)) {
+                classSet.add(clazz);
+            }
+        }
+        return classSet;
+    }
+
 }

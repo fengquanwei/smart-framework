@@ -1,9 +1,6 @@
 package com.kilogate.framework;
 
-import com.kilogate.framework.helper.BeanHelper;
-import com.kilogate.framework.helper.ClassHelper;
-import com.kilogate.framework.helper.ControllerHelper;
-import com.kilogate.framework.helper.IocHelper;
+import com.kilogate.framework.helper.*;
 import com.kilogate.framework.util.ClassUtil;
 
 /**
@@ -14,7 +11,12 @@ import com.kilogate.framework.util.ClassUtil;
  **/
 public class HelperLoader {
     public static void init() {
-        Class<?>[] classes = {ClassHelper.class, BeanHelper.class, IocHelper.class, ControllerHelper.class};
+        Class<?>[] classes = {
+                ClassHelper.class,
+                BeanHelper.class,
+                AopHelper.class,
+                IocHelper.class,
+                ControllerHelper.class};
 
         for (Class<?> clazz : classes) {
             ClassUtil.loadClass(clazz.getName(), false);
