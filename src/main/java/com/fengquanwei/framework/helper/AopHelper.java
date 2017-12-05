@@ -1,9 +1,11 @@
 package com.fengquanwei.framework.helper;
 
 import com.fengquanwei.framework.annotation.Aspect;
+import com.fengquanwei.framework.annotation.Service;
 import com.fengquanwei.framework.proxy.AspectProxy;
 import com.fengquanwei.framework.proxy.Proxy;
 import com.fengquanwei.framework.proxy.ProxyManager;
+import com.fengquanwei.framework.proxy.TransactionProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,34 +39,13 @@ public class AopHelper {
     }
 
     /**
-     * 获取 Aspect 注解中设置的目标类集合
-     */
-    private static Set<Class<?>> createTargetClassSet(Aspect aspect) {
-        Set<Class<?>> targetClassSet = new HashSet<>();
-
-        Class<? extends Annotation> annotation = aspect.value();
-        if (annotation != null && !annotation.equals(Aspect.class)) {
-            targetClassSet.addAll(ClassHelper.getClassSetByAnnotation(annotation));
-        }
-
-        return targetClassSet;
-    }
-
-    /**
      * 获取代理类与目标类集合之间的映射关系
-     * 这里的代理类是指切面类，即扩展了 AspectProxy 抽象类的类，还要带有 Aspect 注解
      */
     private static Map<Class<?>, Set<Class<?>>> createProxyMap() {
         Map<Class<?>, Set<Class<?>>> proxyMap = new HashMap<>();
-        Set<Class<?>> proxyClassSet = ClassHelper.getClassSetBySuper(AspectProxy.class);
 
-        for (Class<?> proxyClass : proxyClassSet) {
-            if (proxyClass.isAnnotationPresent(Aspect.class)) {
-                Aspect aspect = proxyClass.getAnnotation(Aspect.class);
-                Set<Class<?>> targetClassSet = createTargetClassSet(aspect);
-                proxyMap.put(proxyClass, targetClassSet);
-            }
-        }
+        addAspectProxy(proxyMap);
+        addTransactionProxy(proxyMap);
 
         return proxyMap;
     }
@@ -95,4 +76,34 @@ public class AopHelper {
         return targetMap;
     }
 
+    /**
+     * 添加切面代理
+     * 这里的代理类是指切面类，即扩展了 AspectProxy 抽象类的类，还要带有 Aspect 注解
+     */
+    private static void addAspectProxy(Map<Class<?>, Set<Class<?>>> proxyMap) {
+        Set<Class<?>> proxyClassSet = ClassHelper.getClassSetBySuper(AspectProxy.class);
+
+        for (Class<?> proxyClass : proxyClassSet) {
+            if (proxyClass.isAnnotationPresent(Aspect.class)) {
+                Aspect aspect = proxyClass.getAnnotation(Aspect.class);
+
+                Set<Class<?>> targetClassSet = new HashSet<>();
+                Class<? extends Annotation> annotation = aspect.value();
+                if (annotation != null && !annotation.equals(Aspect.class)) {
+                    targetClassSet.addAll(ClassHelper.getClassSetByAnnotation(annotation));
+                }
+
+                proxyMap.put(proxyClass, targetClassSet);
+            }
+        }
+
+    }
+
+    /**
+     * 添加事务代理
+     */
+    private static void addTransactionProxy(Map<Class<?>, Set<Class<?>>> proxyMap) {
+        Set<Class<?>> proxyClassSet = ClassHelper.getClassSetByAnnotation(Service.class);
+        proxyMap.put(TransactionProxy.class, proxyClassSet);
+    }
 }
