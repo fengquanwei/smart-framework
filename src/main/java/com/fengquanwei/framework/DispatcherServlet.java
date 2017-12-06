@@ -1,16 +1,12 @@
 package com.fengquanwei.framework;
 
-import com.fengquanwei.framework.helper.ConfigHelper;
-import com.fengquanwei.framework.helper.ControllerHelper;
-import com.fengquanwei.framework.util.CodecUtil;
-import com.fengquanwei.framework.util.ReflectionUtil;
-import com.fengquanwei.framework.util.StreamUtil;
 import com.fengquanwei.framework.bean.Data;
 import com.fengquanwei.framework.bean.Handler;
 import com.fengquanwei.framework.bean.Param;
 import com.fengquanwei.framework.bean.View;
-import com.fengquanwei.framework.helper.BeanHelper;
+import com.fengquanwei.framework.helper.*;
 import com.fengquanwei.framework.util.JsonUtil;
+import com.fengquanwei.framework.util.ReflectionUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletConfig;
@@ -24,8 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -51,6 +45,8 @@ public class DispatcherServlet extends HttpServlet {
         // 注册处理静态资源的默认 Servlet TODO 干嘛用的？
         ServletRegistration defaultServlet = servletContext.getServletRegistration("default");
         defaultServlet.addMapping(ConfigHelper.getAppAssetPath() + "*");
+
+        UploadHelper.init(servletContext);
     }
 
     @Override
@@ -58,6 +54,10 @@ public class DispatcherServlet extends HttpServlet {
         // 获取请求方法与请求路径
         String requestMethod = request.getMethod().toLowerCase();
         String requestPath = request.getPathInfo();
+
+        if (requestPath.equals("/favicon.ico")) {
+            return;
+        }
 
         // 获取 Action 处理器
         Handler handler = ControllerHelper.getHandler(requestMethod, requestPath);
@@ -67,65 +67,62 @@ public class DispatcherServlet extends HttpServlet {
             Object controllerBean = BeanHelper.getBean(controllerClass);
 
             // 创建请求参数对象
-            Map<String, Object> paramMap = new HashMap<>();
-            Enumeration<String> paramNames = request.getParameterNames();
-            while (paramNames.hasMoreElements()) {
-                String paramName = paramNames.nextElement();
-                String paramValue = request.getParameter(paramName);
-                paramMap.put(paramName, paramValue);
+            Param param;
+            if (UploadHelper.isMultipart(request)) {
+                param = UploadHelper.createParam(request);
+            } else {
+                param = RequestHelper.createParam(request);
             }
-
-            String body = CodecUtil.decodeURL(StreamUtil.getString(request.getInputStream()));
-            if (StringUtils.isNotBlank(body)) {
-                String[] params = body.split("&");
-                if (params != null && params.length > 0) {
-                    for (String param : params) {
-                        String[] array = param.split("=");
-                        if (array != null && array.length == 2) {
-                            String paramName = array[0];
-                            String paramValue = array[1];
-                            paramMap.put(paramName, paramValue);
-                        }
-                    }
-                }
-            }
-
-            Param param = new Param(paramMap);
 
             // 调用 Action 方法
             Method actionMethod = handler.getActionMethod();
-            Object result = ReflectionUtil.invokeMethod(controllerBean, actionMethod, param);
+            Object result;
+            if (param.isEmpty()) {
+                result = ReflectionUtil.invokeMethod(controllerBean, actionMethod);
+            } else {
+                result = ReflectionUtil.invokeMethod(controllerBean, actionMethod, param);
+            }
 
             // 处理 Action 方法的返回值
             if (result instanceof View) {
-                // 返回 JSP 页面
-                View view = (View) result;
-                String path = view.getPath();
-                if (StringUtils.isNotBlank(path)) {
-                    if (path.startsWith("/")) {
-                        response.sendRedirect(request.getContextPath() + path);
-                    } else {
-                        Map<String, Object> model = view.getModel();
-                        for (Map.Entry<String, Object> entry : model.entrySet()) {
-                            request.setAttribute(entry.getKey(), entry.getValue());
-                        }
-                        request.getRequestDispatcher(ConfigHelper.getAppJspPath() + path).forward(request, response);
-                    }
-                }
+                handleViewResult((View) result, request, response);
             } else if (result instanceof Data) {
-                // 返回 JSON 数据
-                Data data = (Data) result;
-                Object model = data.getModel();
-                if (model != null) {
-                    response.setContentType("application/json");
-                    response.setCharacterEncoding("UTF-8");
-                    PrintWriter writer = response.getWriter();
-                    String json = JsonUtil.toJson(model);
-                    writer.write(json);
-                    writer.flush();
-                    writer.close();
-                }
+                handleDataRequest((Data) result, request, response);
             }
+        }
+    }
+
+    /**
+     * 返回 JSP 页面
+     */
+    private void handleViewResult(View view, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        String path = view.getPath();
+        if (StringUtils.isNotBlank(path)) {
+            if (path.startsWith("/")) {
+                response.sendRedirect(request.getContextPath() + path);
+            } else {
+                Map<String, Object> model = view.getModel();
+                for (Map.Entry<String, Object> entry : model.entrySet()) {
+                    request.setAttribute(entry.getKey(), entry.getValue());
+                }
+                request.getRequestDispatcher(ConfigHelper.getAppJspPath() + path).forward(request, response);
+            }
+        }
+    }
+
+    /**
+     * 返回 JSON 数据
+     */
+    private void handleDataRequest(Data data, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Object model = data.getModel();
+        if (model != null) {
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            PrintWriter writer = response.getWriter();
+            String json = JsonUtil.toJson(model);
+            writer.write(json);
+            writer.flush();
+            writer.close();
         }
     }
 }

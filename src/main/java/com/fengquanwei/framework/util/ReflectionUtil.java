@@ -15,40 +15,42 @@ import java.util.Arrays;
  * @create 2017/11/13 14:55
  **/
 public class ReflectionUtil {
-    private static Logger logger = LoggerFactory.getLogger(ReflectionUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionUtil.class);
 
     /**
      * 创建实例
      */
-    public static Object newInstance(Class<?> clazz) {
-        Object instance = null;
-
+    public static Object newInstance(Class<?> cls) {
+        Object instance;
         try {
-            instance = clazz.newInstance();
-        } catch (InstantiationException e) {
-            logger.error("创建实例异常, clazz: {}", clazz, e);
-        } catch (IllegalAccessException e) {
-            logger.error("创建实例异常, clazz: {}", clazz, e);
+            instance = cls.newInstance();
+        } catch (Exception e) {
+            LOGGER.error("new instance failure", e);
+            throw new RuntimeException(e);
         }
-
         return instance;
+    }
+
+    /**
+     * 创建实例（根据类名）
+     */
+    public static Object newInstance(String className) {
+        Class<?> cls = ClassUtil.loadClass(className);
+        return newInstance(cls);
     }
 
     /**
      * 调用方法
      */
     public static Object invokeMethod(Object obj, Method method, Object... args) {
-        Object result = null;
-
-        method.setAccessible(true);
+        Object result;
         try {
+            method.setAccessible(true);
             result = method.invoke(obj, args);
-        } catch (IllegalAccessException e) {
-            logger.error("调用方法异常, obj: {}, method: {}, args: {}", obj, method, Arrays.toString(args), e);
-        } catch (InvocationTargetException e) {
-            logger.error("调用方法异常, obj: {}, method: {}, args: {}", obj, method, Arrays.toString(args), e);
+        } catch (Exception e) {
+            LOGGER.error("invoke method failure", e);
+            throw new RuntimeException(e);
         }
-
         return result;
     }
 
@@ -56,11 +58,12 @@ public class ReflectionUtil {
      * 设置成员变量的值
      */
     public static void setField(Object obj, Field field, Object value) {
-        field.setAccessible(true);
         try {
+            field.setAccessible(true);
             field.set(obj, value);
-        } catch (IllegalAccessException e) {
-            logger.error("设置成员变量的值异常, obj: {}, field: {}, value: {}", obj, field, value, e);
+        } catch (Exception e) {
+            LOGGER.error("set field failure", e);
+            throw new RuntimeException(e);
         }
     }
 }

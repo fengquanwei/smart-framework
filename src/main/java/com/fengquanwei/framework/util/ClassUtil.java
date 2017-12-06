@@ -1,12 +1,10 @@
 package com.fengquanwei.framework.util;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.Enumeration;
@@ -22,7 +20,7 @@ import java.util.jar.JarFile;
  * @create 2017/11/12 20:39
  **/
 public class ClassUtil {
-    private static Logger logger = LoggerFactory.getLogger(ClassUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClassUtil.class);
 
     /**
      * 获取类加载器
@@ -33,26 +31,30 @@ public class ClassUtil {
 
     /**
      * 加载类
-     * isInitialized：是否执行类的静态代码块
      */
     public static Class<?> loadClass(String className, boolean isInitialized) {
-        Class<?> clazz = null;
-
+        Class<?> cls;
         try {
-            clazz = Class.forName(className, isInitialized, getClassLoader());
+            cls = Class.forName(className, isInitialized, getClassLoader());
         } catch (ClassNotFoundException e) {
-            logger.error("加载类异常, className: {}, isInitialized: {}", className, isInitialized, e);
+            LOGGER.error("load class failure", e);
+            throw new RuntimeException(e);
         }
+        return cls;
+    }
 
-        return clazz;
+    /**
+     * 加载类（默认将初始化类）
+     */
+    public static Class<?> loadClass(String className) {
+        return loadClass(className, true);
     }
 
     /**
      * 获取指定包名下的所有类
      */
     public static Set<Class<?>> getClassSet(String packageName) {
-        Set<Class<?>> classSet = new HashSet<>();
-
+        Set<Class<?>> classSet = new HashSet<Class<?>>();
         try {
             Enumeration<URL> urls = getClassLoader().getResources(packageName.replace(".", "/"));
             while (urls.hasMoreElements()) {
@@ -77,21 +79,19 @@ public class ClassUtil {
                                     }
                                 }
                             }
-
                         }
                     }
                 }
             }
-        } catch (IOException e) {
-            logger.error("获取指定包名下的所有类异常, packageName: {}", packageName);
+        } catch (Exception e) {
+            LOGGER.error("get class set failure", e);
+            throw new RuntimeException(e);
         }
-
         return classSet;
     }
 
     private static void addClass(Set<Class<?>> classSet, String packagePath, String packageName) {
         File[] files = new File(packagePath).listFiles(new FileFilter() {
-            @Override
             public boolean accept(File file) {
                 return (file.isFile() && file.getName().endsWith(".class")) || file.isDirectory();
             }
@@ -100,17 +100,17 @@ public class ClassUtil {
             String fileName = file.getName();
             if (file.isFile()) {
                 String className = fileName.substring(0, fileName.lastIndexOf("."));
-                if (StringUtils.isNotBlank(packageName)) {
+                if (StringUtil.isNotEmpty(packageName)) {
                     className = packageName + "." + className;
                 }
                 doAddClass(classSet, className);
             } else {
                 String subPackagePath = fileName;
-                if (StringUtils.isNotBlank(subPackagePath)) {
+                if (StringUtil.isNotEmpty(packagePath)) {
                     subPackagePath = packagePath + "/" + subPackagePath;
                 }
                 String subPackageName = fileName;
-                if (StringUtils.isNotBlank(packageName)) {
+                if (StringUtil.isNotEmpty(packageName)) {
                     subPackageName = packageName + "." + subPackageName;
                 }
                 addClass(classSet, subPackagePath, subPackageName);
@@ -119,8 +119,7 @@ public class ClassUtil {
     }
 
     private static void doAddClass(Set<Class<?>> classSet, String className) {
-        Class<?> clazz = loadClass(className, false);
-        classSet.add(clazz);
+        Class<?> cls = loadClass(className, false);
+        classSet.add(cls);
     }
-
 }

@@ -1,7 +1,7 @@
 package com.fengquanwei.framework.helper;
 
-import com.fengquanwei.framework.util.PropertiesUtil;
 import com.fengquanwei.framework.constant.ConfigConstant;
+import com.fengquanwei.framework.util.PropertiesUtil;
 
 import java.util.Properties;
 
@@ -40,5 +40,12 @@ public class ConfigHelper {
 
     public static String getAppAssetPath() {
         return PropertiesUtil.getString(CONFIG_PROPERTIES, ConfigConstant.APP_ASSET_PATH, "/asset/");
+    }
+
+    /**
+     * 获取应用文件上传限制
+     */
+    public static int getAppUploadLimit() {
+        return PropertiesUtil.getInt(CONFIG_PROPERTIES, ConfigConstant.APP_UPLOAD_LIMIT, 10);
     }
 }

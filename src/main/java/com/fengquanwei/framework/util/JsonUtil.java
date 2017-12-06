@@ -1,9 +1,8 @@
 package com.fengquanwei.framework.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * JSON 工具类
@@ -12,20 +11,21 @@ import java.io.IOException;
  * @create 2017/11/17 21:22
  **/
 public class JsonUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonUtil.class);
+
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     /**
      * 将 POJO 转为 JSON
      */
     public static <T> String toJson(T obj) {
-        String json = null;
-
+        String json;
         try {
             json = OBJECT_MAPPER.writeValueAsString(obj);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LOGGER.error("convert POJO to JSON failure", e);
+            throw new RuntimeException(e);
         }
-
         return json;
     }
 
@@ -33,14 +33,13 @@ public class JsonUtil {
      * 将 JSON 转为 POJO
      */
     public static <T> T fromJson(String json, Class<T> type) {
-        T pojo = null;
-
+        T pojo;
         try {
             pojo = OBJECT_MAPPER.readValue(json, type);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LOGGER.error("convert JSON to POJO failure", e);
+            throw new RuntimeException(e);
         }
-
         return pojo;
     }
 }
