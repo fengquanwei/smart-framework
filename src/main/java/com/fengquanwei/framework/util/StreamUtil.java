@@ -17,10 +17,10 @@ public class StreamUtil {
     /**
      * 从输入流中获取字符串
      */
-    public static String getString(InputStream is) {
+    public static String getString(InputStream inputStream) {
         StringBuilder sb = new StringBuilder();
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
             while ((line = reader.readLine()) != null) {
                 sb.append(line);

@@ -45,9 +45,10 @@ public class CodecUtil {
     }
 
     /**
-     * MD5
+     * MD5 Hex
      */
-    public static String md5(String source) {
+    public static String md5Hex(String source) {
         return DigestUtils.md5Hex(source);
     }
+
 }

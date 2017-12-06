@@ -54,7 +54,7 @@ public class ClassUtil {
      * 获取指定包名下的所有类
      */
     public static Set<Class<?>> getClassSet(String packageName) {
-        Set<Class<?>> classSet = new HashSet<Class<?>>();
+        Set<Class<?>> classSet = new HashSet<>();
         try {
             Enumeration<URL> urls = getClassLoader().getResources(packageName.replace(".", "/"));
             while (urls.hasMoreElements()) {

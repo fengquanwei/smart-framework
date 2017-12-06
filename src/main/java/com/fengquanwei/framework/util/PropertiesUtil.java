@@ -21,43 +21,43 @@ public class PropertiesUtil {
      * 加载属性文件
      */
     public static Properties loadProperties(String fileName) {
-        Properties props = null;
-        InputStream is = null;
+        Properties properties = null;
+        InputStream inputStream = null;
         try {
-            is = ClassUtil.getClassLoader().getResourceAsStream(fileName);
-            if (is == null) {
+            inputStream = ClassUtil.getClassLoader().getResourceAsStream(fileName);
+            if (inputStream == null) {
                 throw new FileNotFoundException(fileName + " file is not found");
             }
-            props = new Properties();
-            props.load(is);
+            properties = new Properties();
+            properties.load(inputStream);
         } catch (IOException e) {
             LOGGER.error("load properties file failure", e);
         } finally {
-            if (is != null) {
+            if (inputStream != null) {
                 try {
-                    is.close();
+                    inputStream.close();
                 } catch (IOException e) {
                     LOGGER.error("close input stream failure", e);
                 }
             }
         }
-        return props;
+        return properties;
     }
 
     /**
      * 获取 String 类型的属性值（默认值为空字符串）
      */
-    public static String getString(Properties props, String key) {
-        return getString(props, key, "");
+    public static String getString(Properties properties, String key) {
+        return getString(properties, key, "");
     }
 
     /**
      * 获取 String 类型的属性值（可指定默认值）
      */
-    public static String getString(Properties props, String key, String defaultValue) {
+    public static String getString(Properties properties, String key, String defaultValue) {
         String value = defaultValue;
-        if (props.containsKey(key)) {
-            value = props.getProperty(key);
+        if (properties.containsKey(key)) {
+            value = properties.getProperty(key);
         }
         return value;
     }
@@ -65,17 +65,17 @@ public class PropertiesUtil {
     /**
      * 获取 int 类型的属性值（默认值为 0）
      */
-    public static int getInt(Properties props, String key) {
-        return getInt(props, key, 0);
+    public static int getInt(Properties properties, String key) {
+        return getInt(properties, key, 0);
     }
 
     /**
      * 获取 int 类型的属性值（可指定默认值）
      */
-    public static int getInt(Properties props, String key, int defaultValue) {
+    public static int getInt(Properties properties, String key, int defaultValue) {
         int value = defaultValue;
-        if (props.containsKey(key)) {
-            value = CastUtil.castInt(props.getProperty(key));
+        if (properties.containsKey(key)) {
+            value = CastUtil.castInt(properties.getProperty(key));
         }
         return value;
     }
@@ -83,17 +83,17 @@ public class PropertiesUtil {
     /**
      * 获取 boolean 类型属性（默认值为 false）
      */
-    public static boolean getBoolean(Properties props, String key) {
-        return getBoolean(props, key, false);
+    public static boolean getBoolean(Properties properties, String key) {
+        return getBoolean(properties, key, false);
     }
 
     /**
      * 获取 boolean 类型属性（可指定默认值）
      */
-    public static boolean getBoolean(Properties props, String key, boolean defaultValue) {
+    public static boolean getBoolean(Properties properties, String key, boolean defaultValue) {
         boolean value = defaultValue;
-        if (props.containsKey(key)) {
-            value = CastUtil.castBoolean(props.getProperty(key));
+        if (properties.containsKey(key)) {
+            value = CastUtil.castBoolean(properties.getProperty(key));
         }
         return value;
     }
