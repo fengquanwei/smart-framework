@@ -14,7 +14,7 @@ import java.util.Arrays;
  * @author fengquanwei
  * @create 2017/11/13 14:55
  **/
-public class ReflectionUtil {
+public final class ReflectionUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionUtil.class);
 
     /**

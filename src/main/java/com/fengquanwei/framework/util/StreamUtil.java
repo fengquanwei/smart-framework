@@ -11,7 +11,7 @@ import java.io.*;
  * @author fengquanwei
  * @create 2017/11/17 21:16
  **/
-public class StreamUtil {
+public final class StreamUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(StreamUtil.class);
 
     /**

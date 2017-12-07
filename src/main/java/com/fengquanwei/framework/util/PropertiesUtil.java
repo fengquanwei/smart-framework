@@ -14,7 +14,7 @@ import java.util.Properties;
  * @author fengquanwei
  * @create 2017/11/11 17:03
  **/
-public class PropertiesUtil {
+public final class PropertiesUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesUtil.class);
 
     /**

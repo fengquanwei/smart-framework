@@ -8,7 +8,7 @@ import org.apache.commons.lang3.ArrayUtils;
  * @author fengquanwei
  * @create 2017/12/6 17:27
  **/
-public class ArrayUtil {
+public final class ArrayUtil {
     /**
      * 判断数组是否非空
      */

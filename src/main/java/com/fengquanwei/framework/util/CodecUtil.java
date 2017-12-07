@@ -13,7 +13,7 @@ import java.net.URLEncoder;
  * @author fengquanwei
  * @create 2017/11/17 21:19
  **/
-public class CodecUtil {
+public final class CodecUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(CodecUtil.class);
 
     /**
@@ -50,5 +50,4 @@ public class CodecUtil {
     public static String md5Hex(String source) {
         return DigestUtils.md5Hex(source);
     }
-
 }

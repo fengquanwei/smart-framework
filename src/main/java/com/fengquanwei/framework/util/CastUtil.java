@@ -6,7 +6,7 @@ package com.fengquanwei.framework.util;
  * @author fengquanwei
  * @create 2017/12/6 17:29
  **/
-public class CastUtil {
+public final class CastUtil {
     /**
      * 转为 String 型
      */

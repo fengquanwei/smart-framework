@@ -12,7 +12,7 @@ import java.util.Map;
  * @author fengquanwei
  * @create 2017/12/6 17:44
  **/
-public class CollectionUtil {
+public final class CollectionUtil {
     /**
      * 判断 Collection 是否为空
      */

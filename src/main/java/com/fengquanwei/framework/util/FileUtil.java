@@ -13,7 +13,7 @@ import java.io.File;
  * @author fengquanwei
  * @create 2017/12/6 16:12
  **/
-public class FileUtil {
+public final class FileUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileUtil.class);
 
     /**

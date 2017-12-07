@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author fengquanwei
  * @create 2017/12/6 15:34
  **/
-public class StringUtil {
+public final class StringUtil {
     /**
      * 字符串分隔符
      */
