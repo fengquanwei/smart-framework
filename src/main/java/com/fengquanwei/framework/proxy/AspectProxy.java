@@ -15,7 +15,7 @@ public abstract class AspectProxy implements Proxy {
     private static final Logger logger = LoggerFactory.getLogger(AspectProxy.class);
 
     @Override
-    public Object doProxy(ProxyChain proxyChain) throws Throwable {
+    public final Object doProxy(ProxyChain proxyChain) throws Throwable {
         Object result = null;
 
         Class<?> targetClass = proxyChain.getTargetClass();
@@ -46,23 +46,19 @@ public abstract class AspectProxy implements Proxy {
 
     }
 
-    public boolean intercept(Class<?> clazz, Method method, Object[] params) throws Throwable {
+    public boolean intercept(Class<?> cls, Method method, Object[] params) throws Throwable {
         return true;
     }
 
-    public void before(Class<?> clazz, Method method, Object[] params) throws Throwable {
-
+    public void before(Class<?> cls, Method method, Object[] params) throws Throwable {
     }
 
-    public void after(Class<?> clazz, Method method, Object[] params, Object result) throws Throwable {
-
+    public void after(Class<?> cls, Method method, Object[] params, Object result) throws Throwable {
     }
 
-    public void error(Class<?> clazz, Method method, Object[] params, Throwable throwable) throws Throwable {
-
+    public void error(Class<?> cls, Method method, Object[] params, Throwable e) {
     }
 
     public void end() {
-
     }
 }

@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
  * @create 2017/12/5 15:56
  **/
 public class TransactionProxy implements Proxy {
-    private static final Logger logger = LoggerFactory.getLogger(TransactionProxy.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TransactionProxy.class);
 
     private static final ThreadLocal<Boolean> FLAG_HOLDER = new ThreadLocal<Boolean>() {
         @Override
@@ -25,31 +25,27 @@ public class TransactionProxy implements Proxy {
 
     @Override
     public Object doProxy(ProxyChain proxyChain) throws Throwable {
-        Object result = null;
-        Boolean flag = FLAG_HOLDER.get();
+        Object result;
+        boolean flag = FLAG_HOLDER.get();
         Method method = proxyChain.getTargetMethod();
-
         if (!flag && method.isAnnotationPresent(Transaction.class)) {
             FLAG_HOLDER.set(true);
-
             try {
                 DatabaseHelper.beginTransaction();
-                logger.info("开启事务");
-
+                LOGGER.debug("begin transaction");
                 result = proxyChain.doProxyChain();
-
                 DatabaseHelper.commitTransaction();
-                logger.info("提交事务");
+                LOGGER.debug("commit transaction");
             } catch (Exception e) {
                 DatabaseHelper.rollbackTransaction();
-                logger.info("回滚事务");
+                LOGGER.debug("rollback transaction");
+                throw e;
             } finally {
                 FLAG_HOLDER.remove();
             }
         } else {
             result = proxyChain.doProxyChain();
         }
-
         return result;
     }
 }

@@ -14,7 +14,8 @@ import java.util.List;
  * @create 2017/11/29 15:48
  **/
 public class ProxyManager {
-    public static <T> T createProxy(final Class<T> targetClass, final List<Proxy> proxyList) {
+    @SuppressWarnings("unchecked")
+    public static <T> T createProxy(final Class<?> targetClass, final List<Proxy> proxyList) {
         return (T) Enhancer.create(targetClass, new MethodInterceptor() {
             @Override
             public Object intercept(Object targetObject, Method targetMethod, Object[] methodParams, MethodProxy methodProxy) throws Throwable {
