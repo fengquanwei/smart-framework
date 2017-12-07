@@ -1,5 +1,7 @@
 package com.fengquanwei.framework.bean;
 
+import com.fengquanwei.framework.util.CastUtil;
+import com.fengquanwei.framework.util.CollectionUtil;
 import com.fengquanwei.framework.util.StringUtil;
 
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ public class Param {
      */
     public Map<String, Object> getFieldMap() {
         Map<String, Object> fieldMap = new HashMap<>();
-        if (formParamList != null && formParamList.size() > 0) {
+        if (CollectionUtil.isNotEmpty(formParamList)) {
             for (FormParam formParam : formParamList) {
                 String fieldName = formParam.getFieldName();
                 Object fieldValue = formParam.getFieldValue();
@@ -49,7 +51,7 @@ public class Param {
      */
     public Map<String, List<FileParam>> getFileMap() {
         Map<String, List<FileParam>> fileMap = new HashMap<>();
-        if (fileParamList != null && fileParamList.size() > 0) {
+        if (CollectionUtil.isNotEmpty(fileParamList)) {
             for (FileParam fileParam : fileParamList) {
                 String fieldName = fileParam.getFieldName();
                 List<FileParam> fileList;
@@ -76,36 +78,52 @@ public class Param {
      * 获取唯一上传文件
      */
     public FileParam getFile(String fieldName) {
-        List<FileParam> fileList = getFileList(fieldName);
-        if (fileList != null && fileList.size() == 1) {
-            return fileList.get(0);
+        List<FileParam> fileParamList = getFileList(fieldName);
+        if (CollectionUtil.isNotEmpty(fileParamList) && fileParamList.size() == 1) {
+            return fileParamList.get(0);
         }
-
         return null;
     }
 
     /**
-     * 根据参数名获取 String 类型参数值
-     */
-    public String getString(String name) {
-        return (String) getFieldMap().get(name);
-    }
-
-    /**
-     * 根据参数名获取 Integer 类型参数值
-     */
-    public Integer getInteger(String name) {
-        return (Integer) getFieldMap().get(name);
-    }
-
-    /**
-     * 参数是否为空
+     * 验证参数是否为空
      */
     public boolean isEmpty() {
-        if (formParamList != null && formParamList.size() > 0 && fileParamList != null && fileParamList.size() > 0) {
-            return false;
-        }
+        return CollectionUtil.isEmpty(formParamList) && CollectionUtil.isEmpty(fileParamList);
+    }
 
-        return true;
+    /**
+     * 根据参数名获取 String 型参数值
+     */
+    public String getString(String name) {
+        return CastUtil.castString(getFieldMap().get(name));
+    }
+
+    /**
+     * 根据参数名获取 double 型参数值
+     */
+    public double getDouble(String name) {
+        return CastUtil.castDouble(getFieldMap().get(name));
+    }
+
+    /**
+     * 根据参数名获取 long 型参数值
+     */
+    public long getLong(String name) {
+        return CastUtil.castLong(getFieldMap().get(name));
+    }
+
+    /**
+     * 根据参数名获取 int 型参数值
+     */
+    public int getInt(String name) {
+        return CastUtil.castInt(getFieldMap().get(name));
+    }
+
+    /**
+     * 根据参数名获取 boolean 型参数值
+     */
+    public boolean getBoolean(String name) {
+        return CastUtil.castBoolean(getFieldMap().get(name));
     }
 }
