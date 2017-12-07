@@ -7,13 +7,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Bean 助手
+ * Bean 助手类
  *
  * @author fengquanwei
  * @create 2017/11/17 19:15
  **/
-public class BeanHelper {
-    // bean 容器
+public final class BeanHelper {
     private static final Map<Class<?>, Object> BEAN_MAP = new HashMap<>();
 
     static {
@@ -34,14 +33,18 @@ public class BeanHelper {
     /**
      * 获取 Bean 实例
      */
-    public static <T> T getBean(Class<T> clazz) {
-        return (T) BEAN_MAP.get(clazz);
+    @SuppressWarnings("unchecked")
+    public static <T> T getBean(Class<T> cls) {
+        if (!BEAN_MAP.containsKey(cls)) {
+            throw new RuntimeException("can not get bean by class: " + cls);
+        }
+        return (T) BEAN_MAP.get(cls);
     }
 
     /**
      * 设置 Bean 实例
      */
-    public static void setBean(Class<?> clazz, Object object) {
-        BEAN_MAP.put(clazz, object);
+    public static void setBean(Class<?> cls, Object obj) {
+        BEAN_MAP.put(cls, obj);
     }
 }

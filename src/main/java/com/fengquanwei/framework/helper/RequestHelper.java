@@ -2,6 +2,7 @@ package com.fengquanwei.framework.helper;
 
 import com.fengquanwei.framework.bean.FormParam;
 import com.fengquanwei.framework.bean.Param;
+import com.fengquanwei.framework.util.ArrayUtil;
 import com.fengquanwei.framework.util.CodecUtil;
 import com.fengquanwei.framework.util.StreamUtil;
 import com.fengquanwei.framework.util.StringUtil;
@@ -14,13 +15,12 @@ import java.util.Enumeration;
 import java.util.List;
 
 /**
- * 请求助手
+ * 请求助手类
  *
  * @author fengquanwei
  * @create 2017/12/6 16:57
  **/
-public class RequestHelper {
-
+public final class RequestHelper {
     /**
      * 创建请求对象
      */
@@ -33,16 +33,16 @@ public class RequestHelper {
 
     private static List<FormParam> parseParameterNames(HttpServletRequest request) {
         List<FormParam> formParamList = new ArrayList<>();
-        Enumeration<String> parameterNames = request.getParameterNames();
-        while (parameterNames.hasMoreElements()) {
-            String fieldName = parameterNames.nextElement();
+        Enumeration<String> paramNames = request.getParameterNames();
+        while (paramNames.hasMoreElements()) {
+            String fieldName = paramNames.nextElement();
             String[] fieldValues = request.getParameterValues(fieldName);
-            if (fieldValues != null && fieldValues.length > 0) {
+            if (ArrayUtil.isNotEmpty(fieldValues)) {
                 Object fieldValue;
                 if (fieldValues.length == 1) {
                     fieldValue = fieldValues[0];
                 } else {
-                    StringBuffer sb = new StringBuffer();
+                    StringBuilder sb = new StringBuilder("");
                     for (int i = 0; i < fieldValues.length; i++) {
                         sb.append(fieldValues[i]);
                         if (i != fieldValues.length - 1) {
@@ -60,12 +60,12 @@ public class RequestHelper {
     private static List<FormParam> parseInputStream(HttpServletRequest request) throws IOException {
         List<FormParam> formParamList = new ArrayList<>();
         String body = CodecUtil.decodeURL(StreamUtil.getString(request.getInputStream()));
-        if (StringUtils.isNotEmpty(body)) {
+        if (StringUtil.isNotEmpty(body)) {
             String[] kvs = StringUtil.splitString(body, "&");
-            if (kvs != null && kvs.length > 0) {
+            if (ArrayUtil.isNotEmpty(kvs)) {
                 for (String kv : kvs) {
                     String[] array = StringUtil.splitString(kv, "=");
-                    if (array != null && array.length == 2) {
+                    if (ArrayUtil.isNotEmpty(array) && array.length == 2) {
                         String fieldName = array[0];
                         String fieldValue = array[1];
                         formParamList.add(new FormParam(fieldName, fieldValue));

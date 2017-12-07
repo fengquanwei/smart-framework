@@ -13,76 +13,45 @@ import java.lang.annotation.Annotation;
 import java.util.*;
 
 /**
- * 方法拦截助手
+ * 方法拦截助手类
  *
  * @author fengquanwei
  * @create 2017/11/29 21:28
  **/
-public class AopHelper {
-    private static Logger logger = LoggerFactory.getLogger(AopHelper.class);
+public final class AopHelper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AopHelper.class);
 
     static {
         try {
             Map<Class<?>, Set<Class<?>>> proxyMap = createProxyMap();
             Map<Class<?>, List<Proxy>> targetMap = createTargetMap(proxyMap);
-
             for (Map.Entry<Class<?>, List<Proxy>> targetEntry : targetMap.entrySet()) {
                 Class<?> targetClass = targetEntry.getKey();
                 List<Proxy> proxyList = targetEntry.getValue();
                 Object proxy = ProxyManager.createProxy(targetClass, proxyList);
                 BeanHelper.setBean(targetClass, proxy);
             }
-
         } catch (Exception e) {
-            logger.error("AOP init failure", e);
+            LOGGER.error("aop failure", e);
         }
     }
 
     /**
      * 获取代理类与目标类集合之间的映射关系
      */
-    private static Map<Class<?>, Set<Class<?>>> createProxyMap() {
+    private static Map<Class<?>, Set<Class<?>>> createProxyMap() throws Exception {
         Map<Class<?>, Set<Class<?>>> proxyMap = new HashMap<>();
-
         addAspectProxy(proxyMap);
         addTransactionProxy(proxyMap);
-
         return proxyMap;
-    }
-
-    /**
-     * 创建目标类与代理类对象列表之间的映射关系
-     */
-    private static Map<Class<?>, List<Proxy>> createTargetMap(Map<Class<?>, Set<Class<?>>> proxyMap) throws Exception {
-        Map<Class<?>, List<Proxy>> targetMap = new HashMap<>();
-
-        for (Map.Entry<Class<?>, Set<Class<?>>> proxyEntry : proxyMap.entrySet()) {
-            Class<?> proxyClass = proxyEntry.getKey();
-            Set<Class<?>> targetClassSet = proxyEntry.getValue();
-            for (Class<?> targetClass : targetClassSet) {
-                Proxy proxy = (Proxy) proxyClass.newInstance();
-
-                if (targetMap.containsKey(targetClass)) {
-                    targetMap.get(targetClass).add(proxy);
-                } else {
-                    List<Proxy> proxyList = new ArrayList<>();
-                    proxyList.add(proxy);
-                    targetMap.put(targetClass, proxyList);
-                }
-            }
-
-        }
-
-        return targetMap;
     }
 
     /**
      * 添加切面代理
      * 这里的代理类是指切面类，即扩展了 AspectProxy 抽象类的类，还要带有 Aspect 注解
      */
-    private static void addAspectProxy(Map<Class<?>, Set<Class<?>>> proxyMap) {
+    private static void addAspectProxy(Map<Class<?>, Set<Class<?>>> proxyMap) throws Exception {
         Set<Class<?>> proxyClassSet = ClassHelper.getClassSetBySuper(AspectProxy.class);
-
         for (Class<?> proxyClass : proxyClassSet) {
             if (proxyClass.isAnnotationPresent(Aspect.class)) {
                 Aspect aspect = proxyClass.getAnnotation(Aspect.class);
@@ -96,14 +65,35 @@ public class AopHelper {
                 proxyMap.put(proxyClass, targetClassSet);
             }
         }
-
     }
 
     /**
      * 添加事务代理
      */
     private static void addTransactionProxy(Map<Class<?>, Set<Class<?>>> proxyMap) {
-        Set<Class<?>> proxyClassSet = ClassHelper.getClassSetByAnnotation(Service.class);
-        proxyMap.put(TransactionProxy.class, proxyClassSet);
+        Set<Class<?>> serviceClassSet = ClassHelper.getClassSetByAnnotation(Service.class);
+        proxyMap.put(TransactionProxy.class, serviceClassSet);
+    }
+
+    /**
+     * 创建目标类与代理类对象列表之间的映射关系
+     */
+    private static Map<Class<?>, List<Proxy>> createTargetMap(Map<Class<?>, Set<Class<?>>> proxyMap) throws Exception {
+        Map<Class<?>, List<Proxy>> targetMap = new HashMap<>();
+        for (Map.Entry<Class<?>, Set<Class<?>>> proxyEntry : proxyMap.entrySet()) {
+            Class<?> proxyClass = proxyEntry.getKey();
+            Set<Class<?>> targetClassSet = proxyEntry.getValue();
+            for (Class<?> targetClass : targetClassSet) {
+                Proxy proxy = (Proxy) proxyClass.newInstance();
+                if (targetMap.containsKey(targetClass)) {
+                    targetMap.get(targetClass).add(proxy);
+                } else {
+                    List<Proxy> proxyList = new ArrayList<Proxy>();
+                    proxyList.add(proxy);
+                    targetMap.put(targetClass, proxyList);
+                }
+            }
+        }
+        return targetMap;
     }
 }

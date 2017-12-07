@@ -9,13 +9,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Class 助手
+ * Class 助手类
  *
  * @author fengquanwei
  * @create 2017/11/13 14:23
  **/
-public class ClassHelper {
-    // 定义类集合（用于存放所加载的类）
+public final class ClassHelper {
     private static final Set<Class<?>> CLASS_SET;
 
     static {
@@ -31,27 +30,27 @@ public class ClassHelper {
     }
 
     /**
-     * 获取应用包名下的所有 Service 类
+     * 获取应用包名下所有 Service 类
      */
     public static Set<Class<?>> getServiceClassSet() {
         return getClassSetByAnnotation(Service.class);
     }
 
     /**
-     * 获取应用包名下的所有 Controller 类
+     * 获取应用包名下所有 Controller 类
      */
     public static Set<Class<?>> getControllerClassSet() {
         return getClassSetByAnnotation(Controller.class);
     }
 
     /**
-     * 获取应用包名下的所有 Bean 类（包括：Service，Controller 等）
+     * 获取应用包名下所有 Bean 类（包括：Service、Controller 等）
      */
     public static Set<Class<?>> getBeanClassSet() {
-        Set<Class<?>> classSet = new HashSet<>();
-        classSet.addAll(getServiceClassSet());
-        classSet.addAll(getControllerClassSet());
-        return classSet;
+        Set<Class<?>> beanClassSet = new HashSet<>();
+        beanClassSet.addAll(getServiceClassSet());
+        beanClassSet.addAll(getControllerClassSet());
+        return beanClassSet;
     }
 
     /**
@@ -59,9 +58,9 @@ public class ClassHelper {
      */
     public static Set<Class<?>> getClassSetBySuper(Class<?> superClass) {
         Set<Class<?>> classSet = new HashSet<>();
-        for (Class<?> clazz : CLASS_SET) {
-            if (superClass.isAssignableFrom(superClass) && !superClass.equals(clazz)) {
-                classSet.add(clazz);
+        for (Class<?> cls : CLASS_SET) {
+            if (superClass.isAssignableFrom(cls) && !superClass.equals(cls)) {
+                classSet.add(cls);
             }
         }
         return classSet;
@@ -72,9 +71,9 @@ public class ClassHelper {
      */
     public static Set<Class<?>> getClassSetByAnnotation(Class<? extends Annotation> annotationClass) {
         Set<Class<?>> classSet = new HashSet<>();
-        for (Class<?> clazz : CLASS_SET) {
-            if (clazz.isAnnotationPresent(annotationClass)) {
-                classSet.add(clazz);
+        for (Class<?> cls : CLASS_SET) {
+            if (cls.isAnnotationPresent(annotationClass)) {
+                classSet.add(cls);
             }
         }
         return classSet;
