@@ -9,17 +9,17 @@ import com.fengquanwei.framework.util.ClassUtil;
  * @author fengquanwei
  * @create 2017/11/17 20:23
  **/
-public class HelperLoader {
+public final class HelperLoader {
     public static void init() {
-        Class<?>[] classes = {
+        Class<?>[] classList = {
                 ClassHelper.class,
                 BeanHelper.class,
                 AopHelper.class,
                 IocHelper.class,
-                ControllerHelper.class};
-
-        for (Class<?> clazz : classes) {
-            ClassUtil.loadClass(clazz.getName(), false);
+                ControllerHelper.class
+        };
+        for (Class<?> cls : classList) {
+            ClassUtil.loadClass(cls.getName());
         }
     }
 }
