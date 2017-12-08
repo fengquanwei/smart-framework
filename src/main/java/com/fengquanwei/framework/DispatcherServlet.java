@@ -45,16 +45,17 @@ public class DispatcherServlet extends HttpServlet {
         UploadHelper.init(servletContext);
     }
 
+    // jsp 与 default 配置在 $CATALINA_HOME/conf/web.xml 文件中，加载先于自定义的 web.xml
     private void registerServlet(ServletContext servletContext) {
         // 注册处理 JSP 的 Servlet
         ServletRegistration jspServlet = servletContext.getServletRegistration("jsp");
         jspServlet.addMapping("/index.jsp");
-        jspServlet.addMapping(ConfigHelper.getAppJspPath() + "*");
+        jspServlet.addMapping(ConfigHelper.getAppJspPath() + "*"); // 添加 JSP 映射路径
 
         // 注册处理静态资源的默认 Servlet
         ServletRegistration defaultServlet = servletContext.getServletRegistration("default");
         defaultServlet.addMapping("/favicon.ico");
-        defaultServlet.addMapping(ConfigHelper.getAppAssetPath() + "*");
+        defaultServlet.addMapping(ConfigHelper.getAppAssetPath() + "*"); // 添加静态资源映射路径
     }
 
     @Override
